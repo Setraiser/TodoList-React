@@ -15,7 +15,9 @@ export default class App extends Component {
 
   // Так как это приложение без подключения к БД, то нужно задать отсчет номеров id для элементов
   maxId = 100;
-
+  editRef = React.createRef();
+  
+ 
 /*Данные нужно хранить на верху иерархии приложения, там можно будет ими манипулировать 
 (отправлять на нижнии уровни, или получиать данные снизу)*/
   state = {
@@ -27,6 +29,7 @@ export default class App extends Component {
     ],
     term: '', // состояние строки поиска
     filter: 'all' // состояние фильтра
+    
   };
 /*Функция создания элементов с стандартными свойствами*/
   createTodoItem(label) {
@@ -36,6 +39,7 @@ export default class App extends Component {
       label, 
       done: false,
       important: false,
+      isEdit: false,
       id: this.maxId++
     }
   };
@@ -94,23 +98,40 @@ export default class App extends Component {
   элемент с его индексом. Создаем переменную нового значения свойства label, 
   которое принимается из prompt. Если prompt пуст или отменен, то значение
   элемента остается прежним */
-  editItem(arr, id, label) {
+  editItem(arr, id, label, isEdit) {
 
     const idx = arr.findIndex((el) => el.id === id);
+  
     const oldItem = arr[idx];
-    const newLabel = prompt('Edit item', oldItem[label]);
-    const newItem = {...oldItem, [label]: (newLabel === null || newLabel === '') ? oldItem[label] : newLabel};
+    const editLabel = this.editRef.current.value;
+    const newLabel = editLabel;
 
+    const newItem = {...oldItem, [label]: (!newLabel) ? oldItem[label] : newLabel, [isEdit]: !oldItem[isEdit]};
+    
     return [...arr.slice(0, idx), newItem, ...arr.slice(idx + 1)];
-  }
+  };
+
+  onConfirmEditItem =(id) => {
+    this.setState(({todoData}) => {
+      return {
+        todoData: this.editItem(todoData, id, 'label', 'isEdit')    
+      }
+    });
+
+   
+  };
+
 
   onEditItem = (id) => {
     this.setState(({todoData}) => {
       return {
-        todoData: this.editItem(todoData, id, 'label')
-      };
+        todoData: this.toggleProperty(todoData, id, 'isEdit')
+      }
     });
+    
   };
+
+  
 
   
 
@@ -209,6 +230,9 @@ export default class App extends Component {
           onToggleImportant={this.onToggleImportant}
           onToggleDone={this.onToggleDone}
           onEditItem={this.onEditItem}
+          editRef={this.editRef}
+          onConfirmEdit={this.onConfirmEditItem}
+          
         />
         <ItemAddForm 
           onItemAdded = {this.addItem}
