@@ -4,7 +4,7 @@ import TodoListItem from '../todo-list-item';
 import './todo-list.css';
 
 /*Получение свойств и кастомных событий в виде атрибутов, которые были указаны в App*/
-const TodoList = ({ todos, onDeleted, onToggleImportant, onToggleDone, onEditItem }) => {
+const TodoList = ({ todos, onDeleted, onToggleImportant, onToggleDone, onEditItem, editRef, onConfirmEdit }) => {
   /*Делаем деструктуризацию элементов(item) массива данных todos, достаем оттуда id
   и остальные свойства отдельно, чтобы id записать в атрибут key li элемента, а другие свойства в компонент
   TodoListItem (содержимое элемента, атрибуты)*/
@@ -19,6 +19,9 @@ const TodoList = ({ todos, onDeleted, onToggleImportant, onToggleDone, onEditIte
           onToggleImportant={() => onToggleImportant(id)}
           onToggleDone={() => onToggleDone(id)}
           onEditItem={() => onEditItem(id)}
+          onConfirmEdit={() => onConfirmEdit(id)}
+          editRef={editRef}
+          
         />
       </li>
     );
