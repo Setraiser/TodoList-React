@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 
+import EditInput from '../edit-input';
+import ItemLabel from '../item-label';
+
 import './todo-list-item.css';
 
 export default class TodoListItem extends Component {
@@ -9,7 +12,8 @@ export default class TodoListItem extends Component {
   render() {
     /*Получаем нужные атрибуты, свойства, функции из свойств родительского элемента.
     За свойства родительского элемента текущего компонента отвечает props*/
-    const {label, onDeleted, onToggleImportant, onToggleDone, onEditItem, important, done} = this.props;
+    const {label, onDeleted, onToggleImportant, onToggleDone, onEditItem, 
+      important, done, isEdit, editRef, onConfirmEdit} = this.props;
 
     let classNames = 'todo-list-item';
 
@@ -22,13 +26,16 @@ export default class TodoListItem extends Component {
       classNames += ' important';
     }
 
+
+    const labelItem = isEdit ? <EditInput label={label}  
+    onConfirmEdit={onConfirmEdit} editRef={editRef} onEditItem={onEditItem} /> : 
+    <ItemLabel label={label} onToggleDone={onToggleDone} />
+
     return (
       <span className={classNames}>
-        <span
-          className="todo-list-item-label"
-          onClick={onToggleDone}>
-          {label}
-        </span>
+
+      {labelItem}
+       
 
         <button type="button"
                 className="btn btn-outline-success btn-sm float-right"
